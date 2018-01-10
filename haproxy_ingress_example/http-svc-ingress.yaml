@@ -15,3 +15,6 @@ spec:
         backend:
           serviceName: ingress-default-backend
           servicePort: 8080
+
+
+http://54.190.16.164:8080/app
