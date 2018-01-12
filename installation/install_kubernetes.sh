@@ -1,3 +1,2 @@
 #!/usr/bin/env bash
-dcos package install --yes beta_kubernetes
-dcos package install --yes traefix
+dcos package install --yes beta-kubernetes --options=k8s_options.json
