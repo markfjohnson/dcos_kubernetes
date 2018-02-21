@@ -1,0 +1,19 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wls-benefits-deployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: wls-benefits-deployment
+    spec:
+      containers:
+      - name: weblogic12
+        image: markfjohnson/wls_benefits_k8s
+        ports:
+        - containerPort: 8001
+        - containerPort: 7001
+        command: ["/bin/sh", "-c", "env|sort && ls -lt && pwd && bash startWebLogic.sh"]
