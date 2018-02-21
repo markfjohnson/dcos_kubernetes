@@ -3,6 +3,7 @@ set -x
 #
 ## property is the master ip
 HNAME=$(echo $(dcos config show core.dcos_url) | grep -oE '((1?[0-9][0-9]?|2[0-4][0-9]|25[0-5])\.){3}(1?[0-9][0-9]?|2[0-4][0-9]|25[0-5])')
+export HNAME="54.202.55.101"
 echo Script name: $0
 #echo $# arguments
 echo $HNAME
@@ -20,6 +21,10 @@ kubectl delete service --all
 kubectl delete pods --all
 kubectl delete serviceaccounts --all
 kubectl delete ingress --all
+#
+kubectl create -f k8s-admin-user.yaml
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
 #cd ../k8s-prom-grafana
 #kubectl create namespace prometheus
 #kubectl create secret tls prometheus-server-tls --key   ../ssl/wildcard.mydomain.com.key --cert ../ssl/wildcard.mydomain.com-bundle.crt --namespace prometheus
