@@ -161,3 +161,7 @@ spec:
           backend:
             serviceName: wls-benefits-service
             servicePort: 8001
+        - path: /monitoring
+          backend:
+            serviceName: prometheus-service
+            servicePort: 30000
