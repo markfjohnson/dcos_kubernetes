@@ -15,6 +15,7 @@ spec:
         image: markfjohnson/wls_benefits_k8s
         ports:
         - containerPort: 8001
+        - containerPort: 7001
         command: ["/bin/sh", "-c", "env|sort && ls -lt && pwd && bash startWebLogic.sh"]
 
 
@@ -36,8 +37,6 @@ spec:
   selector:
     app: wls-benefits-deployment
   type: ClusterIP
----
----
 ---
 # Service Account
 apiVersion: v1
@@ -66,7 +65,7 @@ spec:
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
       containers:
-      - image: traefik
+      - image: traefik:latest
         name: traefik-ingress-lb
         ports:
         - name: http
@@ -116,16 +115,18 @@ spec:
     k8s-app: traefik-ingress-lb
   ports:
   - port: 80
+    name: traefik-web
+  - port: 8080
+    name: traefik-admin
 
 
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: benefits-ingress
+  name: web-ingress
   annotations:
     kubernetes.io/ingress.class: traefik
-#    ingress.kubernetes.io/rewrite-target: /
     traefik.frontend.rule.type: PathPrefixStrip
 spec:
   rules:
@@ -134,7 +135,24 @@ spec:
         - path: /traefik
           backend:
             serviceName: traefik-web-ui
-            servicePort: 80
+            servicePort: 8080
+        - path: /web
+          backend:
+              serviceName: nginxservice
+              servicePort: 80
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: benefits-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+
+spec:
+  rules:
+    - http:
+        paths:
         - path: /console
           backend:
             serviceName: wls-benefits-service
@@ -143,7 +161,3 @@ spec:
           backend:
             serviceName: wls-benefits-service
             servicePort: 8001
-        - path: /web2
-          backend:
-              serviceName: nginxservice
-              servicePort: 80

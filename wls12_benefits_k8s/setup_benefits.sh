@@ -19,6 +19,7 @@ kubectl get deployments
 echo "------List Ingress"
 kubectl get ingress --output=wide
 kubectl describe ingress benefits-ingress
+kubectl describe ingress web-ingress
 echo "------List Taints"
 kubectl get nodes -o go-template-file="./nodes-taints.tmpl"
 bash ~/dcos_scripts/find_public_node.sh
