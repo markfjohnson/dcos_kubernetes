@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-ebs
+spec:
+  containers:
+  - image: k8s.gcr.io/test-webserver
+    name: test-container
+    volumeMounts:
+    - mountPath: /prometheus
+      name: prometheus-volume
+  volumes:
+  - name: prometheus-volume
+    # This AWS EBS volume must already exist.
+    awsElasticBlockStore:
+      volumeID: vol-07d85381b0a53870a
+      fsType: ext4

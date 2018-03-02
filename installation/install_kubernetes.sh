@@ -4,7 +4,7 @@ dcos package install --yes --cli dcos-enterprise-cli
 dcos package install --yes mysql
 
 echo "Deploy Sample"
-dcos marathon app add ../Weblogic/demo_examples/weblogic_sample_deploy.json
+
 
 echo "Setup security rules"
 dcos security org groups create dept-a

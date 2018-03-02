@@ -9,7 +9,7 @@ metadata:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: traefik-ingress-controller
+  name: traefik-ingress-lb
   labels:
     k8s-app: traefik-ingress-lb
 spec:
@@ -26,28 +26,20 @@ spec:
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
       containers:
-      - image: traefik
+      - image: traefik:latest
         name: traefik-ingress-lb
         ports:
-        - name: web
+        - name: http
           containerPort: 80
           hostPort: 80
-        - name: webssl
-          protocol: TCP
-          containerPort: 443
-          hostPort: 443
-        - protocol: TCP
-          port: 8080
-          name: admin
+        - name: admin
+          containerPort: 8080
+        securityContext:
+          privileged: true
         args:
+        - -d
         - --web
         - --kubernetes
-        - --configFile=/etc/traefik/traefik.toml
-        - --logLevel=DEBUG
-      volumes:
-      - hostPath:
-        path: /etc/traefik
-        name: traefik-volume
       nodeSelector:
         kubernetes.dcos.io/node-type: public
       tolerations:
@@ -55,6 +47,7 @@ spec:
         operator: "Equal"
         value: "true"
         effect: "NoSchedule"
+
 ---
 # Service
 apiVersion: v1
@@ -69,29 +62,41 @@ spec:
       port: 80
       name: web
     - protocol: TCP
-      containerPort: 443
-      hostPort: 443
-    - protocol: TCP
       port: 8080
       name: admin
-  volumeMounts:
-    - mountPath: /etc/traefik
-      name: traefik-volume
-      readOnly: false
-  clusterIP: None
+  type: NodePort
+
 ---
-#Ingress
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-web-ui
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+  - port: 80
+    name: traefik-web
+  - port: 8080
+    name: traefik-admin
+
+---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: probe-ingress
+  name: web-ingress
   annotations:
     kubernetes.io/ingress.class: traefik
+    traefik.frontend.rule.type: PathPrefixStrip
 spec:
   rules:
-  - http:
-      paths:
-      - path: /test
-        backend:
-          serviceName: nginxservice
-          servicePort: 80
+    - http:
+        paths:
+        - path: /traefik
+          backend:
+            serviceName: traefik-web-ui
+            servicePort: 8080
+
+
+
+

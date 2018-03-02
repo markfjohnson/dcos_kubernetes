@@ -1,0 +1,16 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+
+spec:
+  rules:
+    - http:
+        paths:
+        - path: /prometheus
+          backend:
+            serviceName: killjoy-mastiff-prometheus-server
+            servicePort: 80

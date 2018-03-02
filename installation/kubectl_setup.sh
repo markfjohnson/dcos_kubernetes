@@ -3,7 +3,7 @@ set -x
 #
 ## property is the master ip
 HNAME=$(echo $(dcos config show core.dcos_url) | grep -oE '((1?[0-9][0-9]?|2[0-4][0-9]|25[0-5])\.){3}(1?[0-9][0-9]?|2[0-4][0-9]|25[0-5])')
-export HNAME="54.202.55.101"
+export HNAME="54.190.198.140"
 echo Script name: $0
 #echo $# arguments
 echo $HNAME
@@ -18,18 +18,27 @@ echo $HNAME
 #fi
 kubectl delete deployments --all
 kubectl delete service --all
-kubectl delete pods --all
+kubectl delete ds --all
 kubectl delete serviceaccounts --all
 kubectl delete ingress --all
+kubectl delete namespace --all
+kubectl delete pods --all
 #
 kubectl create -f k8s-admin-user.yaml
-kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
-#cd ../k8s-prom-grafana
-#kubectl create namespace prometheus
-#kubectl create secret tls prometheus-server-tls --key   ../ssl/wildcard.mydomain.com.key --cert ../ssl/wildcard.mydomain.com-bundle.crt --namespace prometheus
-#helm install -f values.yaml stable/prometheus --name prometheus --namespace prometheus
+
+kubectl create -f config-map.yaml
+#kubectl create -f ../wls12_benefits_k8s/install_prmetheus_monitor.yaml --namespace=monitoring
+helm install -f values.yaml stable/prometheus
+kubectl create -f prometheus.yaml
+
+kubectl create -f traefik.yaml
+
 kubectl create -f ../wls12_benefits_k8s/nginxservice.yaml
 kubectl create -f ../wls12_benefits_k8s/benefits_traefik.yaml
 
-open http://localhost:9000/api/v1/namespaces/kube-system/services/kubernetes-dashboard/proxy/
+### The token for the dashboard
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
+open http://localhost:9000/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+
