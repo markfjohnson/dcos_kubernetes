@@ -1,0 +1,32 @@
+{
+  "package": {
+    "config": {
+      "properties": {
+        "apiserver": {
+          "description": "Kubernetes API Server properties",
+          "properties": {
+            "count": {
+              "default": 4,
+              "description": "Number of API Server instances to run.",
+              "title": "Node count",
+              "type": "integer"
+            },
+            "cpus": {
+              "default": 1.0,
+              "description": "API Server instance CPU requirements.",
+              "title": "CPU count",
+              "type": "number"
+            },
+            "mem": {
+              "default": 1024,
+              "description": "API Server instance RAM requirements (in MB).",
+              "title": "Memory size (MB)",
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        }
+      }
+    }
+  }
+}
