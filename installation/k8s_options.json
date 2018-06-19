@@ -1,6 +1,8 @@
 {
   "service": {
-    "log_level": "INFO"
+    "log_level": "DEBUG",
+    "service_account": "kubernetes",
+    "service_account_secret": "kubernetes/sa"
   },
   "kubernetes": {
     "node_count": 3,
@@ -16,3 +18,4 @@
     "count": 1
   }
 }
+
