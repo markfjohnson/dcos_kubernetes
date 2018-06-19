@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-dcos package install --yes kubernetes --options=k8s_options.json
+#dcos package install --yes kubernetes --options=k8s_options.json
+dcos package install kubernetes --package-version=1.0.0-1.9.3
 dcos package install --yes --cli dcos-enterprise-cli
 dcos package install --yes mysql
 

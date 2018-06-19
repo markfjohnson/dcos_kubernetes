@@ -1,0 +1,5 @@
+FROM markfjohnson/dev-python
+
+RUN yum install -y nmap net-tools
+RUN mkdir /python-k8s-samples
+ADD *.py /python-k8s-samples
