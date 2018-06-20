@@ -1,5 +1,7 @@
 FROM markfjohnson/dev-python
 
 #RUN yum install -y nmap net-tools
+RUN pip install cassandra-driver
+RUN pip install mysql-connector-python
 RUN mkdir /python-k8s-samples
 ADD *.py /python-k8s-samples
