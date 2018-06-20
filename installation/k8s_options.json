@@ -1,21 +1,13 @@
 {
   "service": {
-    "log_level": "DEBUG",
+    "log_level": "INFO",
     "service_account": "kubernetes",
     "service_account_secret": "kubernetes/sa"
   },
   "kubernetes": {
     "node_count": 3,
-    "public_node_count": 1
-  },
-  "apiserver": {
-    "count": 1
-  },
-  "scheduler": {
-    "count": 1
-  },
-  "controllermanager": {
-    "count": 1
+    "public_node_count": 0,
+    "high_availability": true
   }
 }
 

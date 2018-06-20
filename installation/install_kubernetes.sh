@@ -39,6 +39,9 @@ dcos package install --yes kubernetes --options=k8s_options.json
 
 # Setup marathon proxxy
 dcos marathon app add kubectl-proxy.json
-export PUBLIC_IP=="$(./find-public-agent.sh)"
-dcos kubernetes kubeconfig --apiserver-url https://$PUBLIC_IP:6443 --insecure-skip-tls-verify --no-activate-context
+
+dcos kubernetes kubeconfig --apiserver-url https://54.202.229.0:6443 --insecure-skip-tls-verify --no-activate-context
+kubectl proxy
+
+# http://127.0.0.1:8001/api/v1/namespaces/kube-system/services/http:kubernetes-dashboard:/proxy/
 
