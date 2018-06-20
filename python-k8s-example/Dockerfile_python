@@ -4,4 +4,5 @@ FROM markfjohnson/dev-python
 RUN pip install cassandra-driver
 RUN pip install mysql-connector-python
 RUN mkdir /python-k8s-samples
-ADD *.py /python-k8s-samples
+COPY *.py /python-k8s-samples/
+RUN ls -lt /python-k8s-samples

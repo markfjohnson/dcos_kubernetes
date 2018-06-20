@@ -1,15 +1,13 @@
 import mysql.connector
 from mysql.connector import errorcode
 import datetime
-import timedelta
-
 
 
 try:
-    cnx = mysql.connector.connect(user='scott', password='password',
-                              host='127.0.0.1',
-                              database='employees')
-    DB_NAME = 'employees'
+    cnx = mysql.connector.connect(user='admin', password='password',
+                              host='mysql.marathon.l4lb.thisdcos.directory',
+                              database="defaultdb")
+
 
     TABLES = {}
     TABLES['employees'] = (
@@ -24,36 +22,31 @@ try:
     ") ENGINE=InnoDB")
 
     cursor = cnx.cursor()
-    cursor.execute(
-        "CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(DB_NAME))
 
     print("Creating table Employees: ")
+    cursor.execute("DROP TABLE IF EXISTS employees")
     cursor.execute(TABLES['employees'])
-    tomorrow = datetime.now().date() + timedelta(days=1)
 
     print("Inserting employee rows")
     add_employee = ("INSERT INTO employees "
                 "(first_name, last_name, hire_date, gender, birth_date) "
                 "VALUES (%s, %s, %s, %s, %s)")
-    data_employee = ('Geert', 'Vanderkelen', tomorrow, 'M', date(1977, 6, 14))
+    data_employee = ('Geert', 'Vanderkelen', datetime.datetime.now(), 'M', datetime.date(1970, 1, 1))
 
     # Insert new employee
     cursor.execute(add_employee, data_employee)
     emp_no = cursor.lastrowid
 
-    query = ("SELECT first_name, last_name, hire_date FROM employees "
-             "WHERE hire_date BETWEEN %s AND %s")
+    query = ("SELECT first_name, last_name, hire_date FROM employees ")
 
-    hire_start = datetime.date(1999, 1, 1)
-    hire_end = datetime.date(1999, 12, 31)
-
-    cursor.execute(query, (hire_start, hire_end))
+    cursor.execute(query)
 
     for (first_name, last_name, hire_date) in cursor:
         print("{}, {} was hired on {:%d %b %Y}".format(
             last_name, first_name, hire_date))
 
     cursor.close()
+    cnx.close()
 
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -62,5 +55,3 @@ except mysql.connector.Error as err:
         print("Database does not exist")
     else:
         print(err)
-finally:
-    cnx.close()
